@@ -1,9 +1,15 @@
 import request from './reset'
-// export const login = (params)=>$axios.post('/login',params)
 export const login = (data)=>{
     return request({
-        url:'/login',
+        url:'/user/login',
         data,
         method:'post'
+    })
+}
+export const userInfoGo = (data)=>{
+    return request({
+        url:'/user/info/admin',
+        data,
+        method:'get'
     })
 }

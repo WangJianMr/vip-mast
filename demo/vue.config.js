@@ -10,21 +10,6 @@ module.exports = defineConfig({
           ['^'+process.env.VUE_APP_DEV]:''
         },
       },
-      
-      "dv1": {
-        target: process.env.VUE_APP_SERVE_API,
-        changeOrigin: true,
-        pathRewrite: {
-          ['^'+process.env.VUE_APP_DEV]:''
-        },
-      },
-      "dv2": {
-        target: process.env.VUE_APP_SERVE_API,
-        changeOrigin: true,
-        pathRewrite: {
-          ['^'+process.env.VUE_APP_DEV]:''
-        },
-      },
     },
   },
 })
