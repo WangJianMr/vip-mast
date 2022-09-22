@@ -13,6 +13,7 @@ export const getUserInfo=()=>{
   return  JSON.parse(localStorage.getItem(USER_KEY) || "{}")
 }
 export const getRemoveTokenInfo=()=>{
+  console.log(123);
     localStorage.removeItem(TOKEN)
     localStorage.removeItem(USER_KEY)
 }

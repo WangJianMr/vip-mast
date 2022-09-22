@@ -1,15 +1,20 @@
-import request from './reset'
+import request from './reset' 
 export const login = (data)=>{
     return request({
-        url:'/user/login',
+        url:'/login',
         data,
         method:'post'
     })
 }
-export const userInfoGo = (data)=>{
+export const userInfoGo = ()=>{
     return request({
-        url:'/user/info/admin',
-        data,
+        url:'/info/admin',
         method:'get'
+    })
+}
+export const logout = ()=>{
+    return request({
+        url:'/logout',
+        method:'post'
     })
 }

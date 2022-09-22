@@ -16,7 +16,7 @@ const exceptionMessage = {
 $axios.interceptors.request.use(function (config) {
     // Do something before request is sent
     const token = store.getters.SET_TOKEN
-    if (token) config.headers.authorization = 'Bearer '+token
+    if (token) config.headers.token = 'Bearer '+token
     return config;
 }, function (error) {
     // Do something with request error

@@ -5,10 +5,10 @@ import store from './store'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import '../src/style/reset.css'
+import './permission'
 Vue.use(ElementUI);
 
 Vue.config.productionTip = false
-console.log(process.env);
 new Vue({
   router,
   store,

@@ -50,10 +50,12 @@ export default {
 
     //登录
     async handleLogin() {
-      let token = this.$store.dispatch("handleLOgin", this.form);
+       let token =await this.$store.dispatch("handleLOgin", this.form);
       if (!token) return;
-      let info = this.$store.dispatch("handleInfo");
-      if (info) return
+       let info =await this.$store.dispatch("handleInfo");
+      if (!info) return
+
+      this.$router.push('/')
     },
 
     // loginGo() {
