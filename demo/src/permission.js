@@ -5,7 +5,7 @@ router.beforeEach(async (to, from, next) => {
     if (token) {
         next()
         if (to.path == '/login') {
-            next(form.path)
+            next(from.path)
         } else {
             let info = store.getters.SET_INFO
             info = typeof info === 'object' ? JSON.stringify(info) : info

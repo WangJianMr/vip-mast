@@ -20,7 +20,8 @@
 import Heades from "./heades/";
 import Aside from "./aside";
 import Main from "./main";
-import {getUserInfo} from '../utils/auth'
+import { getUserInfo } from "../utils/auth";
+import { login1 } from "../utils/api";
 export default {
   name: "layout",
   components: {
@@ -28,11 +29,19 @@ export default {
     Aside,
     Main,
   },
+  created() {
+    login1({
+      username: "admin",
+      password: "admin",
+    }).then((res) => {
+      console.log(res);
+    });
+  },
   watch: {
     $route: {
-      handler() {
+      handler() { 
         // let info =this.$store.getters.SET_INFO
-        let info = localStorage.getItem('userInfo')
+        let info = localStorage.getItem("userInfo");
         // let info = getUserInfo()
         // info = typeof info === "object" ? JSON.stringify(info) : info;
         console.log(info);

@@ -52,6 +52,7 @@ const request = (options) => {
         options.params = options.data || options.params
         delete options.data
     }
+    $axios.defaults.baseURL = options.proxy || process.env.VUE_APP_DEV;
     return $axios(options)
 }
 

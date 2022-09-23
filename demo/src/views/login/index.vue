@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { login, userInfoGo } from "../../utils/api";
+
 export default {
   data() {
     return {
@@ -40,6 +40,7 @@ export default {
       },
     };
   },
+
   methods: {
     loginGo() {
       this.$refs["form"].validate((valid) => {
@@ -47,15 +48,14 @@ export default {
         this.handleLogin();
       });
     },
-
     //登录
     async handleLogin() {
-       let token =await this.$store.dispatch("handleLOgin", this.form);
+      let token = await this.$store.dispatch("handleLOgin", this.form);
       if (!token) return;
-       let info =await this.$store.dispatch("handleInfo");
-      if (!info) return
+      let info = await this.$store.dispatch("handleInfo");
+      if (!info) return;
 
-      this.$router.push('/')
+      this.$router.push("/");
     },
 
     // loginGo() {
