@@ -29,11 +29,11 @@ $axios.interceptors.response.use(function (response) {
     return response;
 }, function (error) {
     console.log(error, 'error');
-    if (error.response.status >= 400) {
-        _showError(error.response.data.errorCode
-            , error.response.data.msg)
-        return
-    }
+    // if (error.response.status >= 400) {
+    //     _showError(error.response.data.errorCode
+    //         , error.response.data.msg)
+    //     return
+    // }
     return Promise.reject(error);
 });
 const _showError = (code = '', message) => {

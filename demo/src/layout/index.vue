@@ -30,12 +30,12 @@ export default {
     Main,
   },
   created() {
-    login1({
-      username: "admin",
-      password: "admin",
-    }).then((res) => {
-      console.log(res);
-    });
+    // login1({
+    //   username: "admin",
+    //   password: "admin",
+    // }).then((res) => {
+    //   console.log(res);
+    // });
   },
   watch: {
     $route: {

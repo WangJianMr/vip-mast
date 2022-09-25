@@ -21,11 +21,11 @@ export const logout = ()=>{
 
 
 
-export const login1 = (data)=>{
-    return request({
-        url:'/login',
-        method:'post',
-        data,
-        proxy:process.env.VUE_APP_DEVS
-    })
-}
+// export const login1 = (data)=>{
+//     return request({
+//         url:'/login',
+//         method:'post',
+//         data,
+//         proxy:process.env.VUE_APP_DEVS
+//     })
+// }
