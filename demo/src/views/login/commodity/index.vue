@@ -9,10 +9,10 @@
         <el-input v-model="commpodSkip.name" placeholder="商品编号"></el-input>
       </el-form-item>
       <el-form-item prop="supplierName">
-        <el-input v-model="commpodSkip.supplierName" placeholder="选择供应商" @focus="supplierNameShow(0)"></el-input>
+        <el-input v-model="commpodSkip.supplierName" placeholder="选择供应商" @focus="addShow(0)"></el-input>
       </el-form-item>
-      <el-button type="primary" @click="skip">查询</el-button>
-      <el-button type="primary" @click="addShow">新增</el-button>
+      <el-button type="primary" @click="handleOk">查询</el-button>
+      <el-button type="primary" @click="addShow(1)">新增</el-button>
       <el-button @click="handelReset('skipForm')">重置</el-button>
       </el-form-item>
     </el-form>
@@ -21,53 +21,22 @@
     <!-- 分页 -->
     <pagination :currentPage="currentPage" :pageSizes="arr" :pageSize="pageSize" :total="total" @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange">
     </pagination>
-    <!-- 模态框 -->
-    <el-dialog title="选择供应商" :visible.sync="supplierNameShows" width="30%">
-      <el-input v-model="supplierNamess" placeholder="选择供应商" style="width:250px"></el-input>
-      <el-button type="primary" class="ml" @click="insSkip">查询</el-button>
-      <el-table :data="suppList" border style="width: 100%" height="350" @row-click="rowClick">
-        <el-table-column type="index" label="序号" width="50">
-        </el-table-column>
-        <el-table-column prop="name" label="供应商名称" width="223">
-        </el-table-column>
-        <el-table-column prop="linkman" label="联系人">
-        </el-table-column>
-      </el-table>
-      <el-pagination layout="prev, pager, next" :page-size="pageSizes" :current-page="currentPages" :total="totals" @size-change="handleSizeChanges" @current-change="handleCurrentChanges">
-      </el-pagination>
-    </el-dialog>
 
-    <!-- 添加模态框 -->
-    <el-dialog :title="title" :visible.sync="dialogVisible" width="30%">
+    <di :di.sync='dialogVisible' :flagNum="flagNum">
+      <template v-slot:inp="scope">
+        <el-input v-model="supplierNamess" placeholder="选择供应商" style="width:250px"></el-input>
+        <el-button type="primary" class="ml" @click="insSkip">查询</el-button>
+      </template>
+      <template v-slot:table="scope">
+        <tab :memberList="suppList" :data="datas"></tab>
+      </template>
+    </di>
 
-      <el-form ref="form" :model="form" label-width="80px" :rules="rules">
-        <el-form-item label="商品名称" prop="name">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="商品编码" prop="code">
-          <el-input v-model="form.code"></el-input>
-        </el-form-item>
-        <el-form-item label="商品规格" prop="spec">
-          <el-input v-model="form.spec"></el-input>
-        </el-form-item>
-        <el-form-item label="零售价" prop="retailPrice">
-          <el-input v-model="form.retailPrice"></el-input>
-        </el-form-item>
-        <el-form-item label="进货价" prop="purchasePrice">
-          <el-input v-model="form.purchasePrice"></el-input>
-        </el-form-item>
-        <el-form-item label="库存数量" prop="storageNum">
-          <el-input v-model="form.storageNum"></el-input>
-        </el-form-item>
-        <el-form-item prop="supplierName" label="供应商">
-          <el-input v-model="form.supplierName" placeholder="选择供应商" @focus="supplierNameShow(1)"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="resetForm('form')">取 消</el-button>
-        <el-button type="primary" @click="handleOk('form')">确 定</el-button>
-      </span>
-    </el-dialog>
+    <di :di.sync='dialogVisible' :flagNum="flagNum" @handleOk="handleOk" @resetForm="resetForm" :title="title">
+      <template v-slot:forms="scope">
+        <fo v-model.sync="form" :rules="rules" :dinForm="dinForm" ref="formName" @vals="vals"></fo>
+      </template>
+    </di>
   </div>
 </template>
 
@@ -83,13 +52,35 @@ import {
 import { payObj } from "../../../publicObj/payType";
 import tab from "../../../components/Tab.vue";
 import pagination from "../../../components/pagination.vue";
+import di from "../../../components/di.vue";
+import fo from "../../../components/formss.vue";
 export default {
   components: {
     tab,
     pagination,
+    di,
+    fo,
   },
   data() {
     return {
+      datas: [
+        {
+          prop: "index",
+          id: "0",
+          name: "序号",
+          width: 50,
+        },
+        {
+          type: "name",
+          id: "1",
+          name: "供应商名称",
+        },
+        {
+          type: "linkman",
+          id: "2",
+          name: "联系人",
+        },
+      ],
       title: "",
       form: {
         name: "",
@@ -100,11 +91,55 @@ export default {
         storageNum: 0,
         supplierName: "",
       },
+      dinForm: [
+        {
+          type: "input",
+          prop: "name",
+          label: "商品名称",
+        },
+        {
+          type: "input",
+          prop: "code",
+          label: "商品编码",
+        },
+        {
+          type: "input",
+          prop: "spec",
+          label: "商品规格",
+        },
+        {
+          type: "input",
+          prop: "retailPrice",
+          label: "零售价",
+        },
+        {
+          type: "input",
+          prop: "purchasePrice",
+          label: "进货价",
+        },
+        {
+          type: "input",
+          prop: "storageNum",
+          label: "库存数量",
+        },
+        {
+          type: "input",
+          prop: "supplierName",
+          label: "供应商",
+          flag: true,
+        },
+      ],
       dialogVisible: false,
       supplierNamess: "",
       supplierNameShows: false,
       arr: [10, 20, 30, 40],
       data: [
+        {
+          prop: "index",
+          id: "0",
+          name: "序号",
+          width: 50,
+        },
         {
           type: "name",
           id: "1",
@@ -140,6 +175,21 @@ export default {
           id: "7",
           name: "供应商",
         },
+        {
+          prop: "active",
+          id: "9",
+          name: "操作",
+          children: [
+            {
+              type: "primary",
+              text: "编辑",
+            },
+            {
+              type: "danger",
+              text: "删除",
+            },
+          ],
+        },
       ],
       currentPage: 1,
       pageSize: 10,
@@ -159,13 +209,18 @@ export default {
       rules: {
         name: [{ required: true, message: "请输入商品名称", trigger: "blur" }],
         code: [{ required: true, message: "请输入商品编码", trigger: "blur" }],
-        retailOrice: [
+        retailPrice: [
           { required: true, message: "请输入零售价", trigger: "blur" },
         ],
       },
+      flag: null,
+      flagNum: null,
     };
   },
   methods: {
+    vals(val) {
+      this.flag = val;
+    },
     handleSizeChanges(val) {
       this.pageSizes = val;
       this.supplierNameList();
@@ -266,29 +321,52 @@ export default {
       this.supplierNameShows = false;
     },
     //新增
-    addShow() {
-      this.title = "新增商品";
-      this.dialogVisible = true;
+    addShow(num) {
+      this.flagNum = num;
+      console.log(num, "num");
+      console.log(this.flagNum);
+      if (num == 0) {
+        this.flagNum = 0;
+        this.dialogVisible = true;
+        this.supplierNameList();
+      } else {
+        this.title = "新增商品";
+        this.dialogVisible = true;
+        this.form = {
+          name: "",
+          code: "",
+          spec: "",
+          retailPrice: 0,
+          purchasePrice: 0,
+          storageNum: 0,
+          supplierName: "",
+        };
+      }
     },
     //新增确定
-    handleOk(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          if (this.form.id) {
-            this.commOk(this.form.id)
-          } else {
-            this.handeladd();
-          }
-          this.rendercommpod()
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
+    handleOk() {
+      this.$refs["formName"].refdd();
+      if (!this.flag) return;
+      if (this.form.id) {
+        this.commOk(this.form.id);
+      } else {
+        this.handeladd();
+      }
+      this.rendercommpod();
+
+      // this.vals()
+      // this.$refs[formName].validate((valid) => {
+      //   if (valid) {
+      //
+      //   } else {
+      //     console.log("error submit!!");
+      //     return false;
+      //   }
+      // });
     },
     //新增取消
-    resetForm(formName) {
-      this.handelReset(formName);
+    resetForm() {
+      this.$refs["formName"].delsd();
     },
     //新增
     async handeladd() {
@@ -296,7 +374,9 @@ export default {
       console.log(add);
     },
     //编辑
-    addFlag(id) {
+    addFlag(id, num) {
+      this.flagNum = 1;
+      this.title = "编辑商品";
       this.ruire(id);
       this.dialogVisible = true;
     },

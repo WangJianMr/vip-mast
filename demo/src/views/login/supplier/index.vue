@@ -1,51 +1,20 @@
 <template>
   <div>
-    <el-form :inline="true" :model="supplierSkip" class="demo-form-inline" ref="skipForm">
-      <el-form-item prop="cardNum">
-        <el-input v-model="supplierSkip.cardNum" placeholder="供应商名称"></el-input>
-      </el-form-item>
-      <el-form-item prop="linkman">
-        <el-input v-model="supplierSkip.linkman" placeholder="联系人"></el-input>
-      </el-form-item>
-      <el-form-item prop="mobile">
-        <el-input v-model="supplierSkip.mobile" placeholder="联系电话"></el-input>
-      </el-form-item>
-      <el-form-item>
+
+    <queryForms v-model.sync="supplierSkip" :quer="quer" ref="skipForm">
+      <template v-slot:query="scope">
         <el-button type="primary" @click="skip">查询</el-button>
         <el-button type="primary" @click="addFlag">新增</el-button>
-        <el-button @click="handelReset('skipForm')">重置</el-button>
-      </el-form-item>
-    </el-form>
+        <el-button @click="handelReset">重置</el-button>
+      </template>
+    </queryForms>
 
-    
-    <tab :memberList = suppleList :data="data" @addFlag="addFlag" @handelDel="handelDel"></tab>
-
+    <tab :memberList="suppleList" :data="data" @addFlag="addFlag" @handelDel="handelDel"></tab>
 
     <pagination :currentPage="currentPage" :pageSizes="arr" :pageSize="pageSize" :total="total" @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange">
     </pagination>
 
-    <el-dialog :title="mtkTitle" :visible.sync="dialogVisible" width="500px">
-
-      <el-form ref="cancels" :rules="mtkRules" :model="form" label-width="100px">
-        <el-form-item label="供应商名称" prop="name">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="联系人" prop="linkman">
-          <el-input v-model="form.linkman"></el-input>
-        </el-form-item>
-        <el-form-item label="联系电话" prop="mobile">
-          <el-input v-model="form.mobile"></el-input>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input type="textarea" v-model="form.remark"></el-input>
-        </el-form-item>
-      </el-form>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="cancel('cancels')">取 消</el-button>
-        <el-button type="primary" @click="addAncompOk">确 定</el-button>
-      </span>
-    </el-dialog>
+    <dialogs v-model.sync="forms" :mtkRules="mtkRules" :dialogForm="dialogForm" :mtkTitle="mtkTitle" :dialogVisible.sync="dialogVisible" @addAncompOk="addAncompOk" ></dialogs>
   </div>
 </template>
 
@@ -57,35 +26,120 @@ import {
   getHandleSkip,
   getHandleComp,
 } from "../../../utils/supplier";
-import tab from '../../../components/Tab.vue'
-import pagination from '../../../components/pagination.vue'
+import tab from "../../../components/Tab.vue";
+import pagination from "../../../components/pagination.vue";
+import queryForms from "../../../components/queryForm.vue";
+import dialogs from "../../../components/dialogs.vue";
 export default {
-  components:{
+  components: {
     tab,
     pagination,
+    queryForms,
+    dialogs,
   },
   data() {
     return {
-       data:[
+      supplierSkip: {
+        name: "",
+        linkman: "",
+        mobile: "",
+      },
+      dialogForm: [
         {
-          type:'name',
-          id:'1',
-          name:'供应商名称',
+          type: "input",
+          prop: "name",
+          name: "供应商名称",
+          width: "width:300px",
         },
         {
-          type:'linkman',
-          id:'2',
-          name:'联系人',
+          type: "input",
+          prop: "linkman",
+          name: "联系人",
+          width: "width:300px",
         },
         {
-          type:'mobile',
-          id:'3',
-          name:'联系电话',
+          type: "input",
+          prop: "mobile",
+          name: "联系电话",
+          width: "width:300px",
         },
         {
-          type:'remark',
-          id:'4',
-          name:'备注',
+          type: "textarea",
+          prop: "mobile",
+          name: "备注",
+          width: "width:300px",
+        },
+      ],
+      quer: [
+        {
+          type: "input",
+          prop: "name",
+          placeholder: "供应商名称",
+        },
+        {
+          type: "input",
+          prop: "linkman",
+          placeholder: "联系人",
+        },
+        {
+          type: "input",
+          prop: "mobile",
+          placeholder: "联系电话",
+        },
+        {
+          type: "slot",
+          slot_name: "query",
+        },
+      ],
+      data: [
+        {
+          prop: "index",
+          id: "0",
+          name: "序号",
+          width: 50,
+        },
+        {
+          type: "name",
+          id: "1",
+          name: "供应商名称",
+        },
+        {
+          type: "linkman",
+          id: "2",
+          name: "联系人",
+        },
+        {
+          type: "mobile",
+          id: "3",
+          name: "联系电话",
+          renderHeader: (h, { column, $index }) => {
+            console.log(column.label);
+            return h("h3", column.label, {});
+          },
+        },
+        {
+          type: "remark",
+          id: "4",
+          name: "备注",
+          prop: "function",
+          callback: (row) => {
+            return `<a href="https://www.baidu.com">${row.remark}</a>`;
+          },
+        },
+        {
+          prop: "active",
+          id: "9",
+          name: "操作",
+          children: [
+            {
+              type: "primary",
+              text: "编辑",
+            },
+            {
+              type: "danger",
+              text: "删除",
+            },
+          ],
         },
       ],
       arr: [10, 20, 30, 40],
@@ -94,13 +148,9 @@ export default {
       currentPage: 1,
       pageSize: 10,
       total: 0,
-      supplierSkip: {
-        name: "",
-        linkman: "",
-        mobile: "",
-      },
+
       suppleList: [],
-      form: {
+      forms: {
         name: "",
         linkman: "",
         mobile: "",
@@ -146,44 +196,35 @@ export default {
       this.renderSupple();
     },
     //重置表单
-    handelReset(skipForm) {
-      this.$refs[skipForm].resetFields();
+    handelReset() {
+      this.$refs["skipForm"].handelResetst();
     },
     //添加/编辑确认
     addAncompOk() {
-      this.$refs["cancels"].validate((valid) => {
-        console.log(valid, "valid");
-        if (!valid) return;
-        console.log(this.form.id);
-        this.form.id ? this.commpOk(this.id) : this.handleadd();
-        this.dialogVisible = false;
-      });
+      this.forms.id ? this.commpOk(this.id) : this.handleadd();
+      this.dialogVisible = false;
     },
     //触发模态框
     addFlag(id) {
       this.dialogVisible = true;
       if (typeof id === "number") {
-        this.mtkTitle = "编辑会员";
+        this.mtkTitle = "编辑供应商";
         this.id = id;
         this.inruire(id);
       } else {
-        this.mtkTitle = "添加会员";
-        this.form = {
-          cardNum: "",
+        this.mtkTitle = "添加供应商";
+        this.forms = {
           name: "",
-          birthday: "",
-          phone: "",
-          money: "",
-          integral: "",
-          payType: "",
-          address: "",
+          linkman: "",
+          mobile: "",
+          remark: "",
         };
       }
     },
     //添加成功
     async handleadd() {
       try {
-        const add = await getHandleMtkOk(this.form);
+        const add = await getHandleMtkOk(this.forms);
         this.$message({
           message: "恭喜你，添加成功",
           type: "success",
@@ -195,7 +236,7 @@ export default {
     async inruire(id) {
       try {
         const ire = await getHandleSkip(id);
-        this.form = ire.data;
+        this.forms = ire.data;
       } catch (error) {}
     },
     //编辑成功

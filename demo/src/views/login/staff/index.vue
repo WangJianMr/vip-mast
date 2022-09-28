@@ -1,79 +1,19 @@
 <template>
   <div>
+    <queryForm v-model.sync="staffSkip" :quer="quer" ref="skipForm">
+      <template v-slot:query="scope">
+        <el-button type="primary" @click="skip">查询</el-button>
+        <el-button type="primary" @click="addFlag">新增</el-button>
+        <el-button @click="handelReset">重置</el-button>
+      </template>
+    </queryForm>
 
-    <el-form :inline="true" :model="staffSkip" class="demo-form-inline" ref="skipForm">
-      <el-form-item prop="code">
-        <el-input v-model="staffSkip.code" placeholder="会员卡号"></el-input>
-      </el-form-item>
-      <el-form-item prop="name">
-        <el-input v-model="staffSkip.name" placeholder="商品编号"></el-input>
-      </el-form-item>
-      <el-form-item prop="supplierName">
-        <el-input v-model="staffSkip.supplierName" placeholder="选择供应商"></el-input>
-      </el-form-item>
-      <el-button type="primary" @click="skip">查询</el-button>
-      <el-button type="primary" @click="addFlag">新增</el-button>
-      <el-button @click="handelReset('skipForm')">重置</el-button>
-      </el-form-item>
-    </el-form>
-
-    <!-- <el-table :data="staffList" height="380" border style="width: 100%">
-      <el-table-column type="index" label="序号" width="60">
-      </el-table-column>
-      <el-table-column prop="username" label="账号">
-      </el-table-column>
-      <el-table-column prop="name" label="姓名">
-      </el-table-column>
-      <el-table-column prop="age" label="年龄">
-      </el-table-column>
-      <el-table-column prop="mobile" label="电话">
-      </el-table-column>
-      <el-table-column prop="salary" label="薪酬">
-      </el-table-column>
-      <el-table-column prop="entryDate" label="入职时间">
-      </el-table-column>
-      <el-table-column label="操作">
-        <template slot-scope="scope">
-          <el-button size="mini" @click="addFlag(scope.row.id)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handelDel(scope.row.id)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table> -->
-
-    <tab :memberList = staffList :data="data" @addFlag="addFlag" @handelDel="handelDel"></tab>
+    <tab :memberList=staffList :data="data" @addFlag="addFlag" @handelDel="handelDel"></tab>
 
     <pagination :currentPage="currentPage" :pageSizes="arr" :pageSize="pageSize" :total="total" @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange">
     </pagination>
 
-    <el-dialog :title="mtkTitle" :visible.sync="dialogVisible" width="500px">
-
-      <el-form ref="cancels" :rules="mtkRules" :model="form" label-width="100px">
-        <el-form-item label="账号" prop="username">
-          <el-input v-model="form.username"></el-input>
-        </el-form-item>
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="年龄" prop="age">
-          <el-input v-model="form.age"></el-input>
-        </el-form-item>
-        <el-form-item label="电话" prop="mobile">
-          <el-input type="textarea" v-model="form.mobile"></el-input>
-        </el-form-item>
-        <el-form-item label="薪酬" prop="salary ">
-          <el-input type="textarea" v-model="form.salary"></el-input>
-        </el-form-item>
-        <el-form-item prop="entryDate" label="入职时间">
-          <el-date-picker value-format="yyyy-MM-dd" v-model="form.entryDate" type="date" placeholder="会员生日">
-          </el-date-picker>
-        </el-form-item>
-      </el-form>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="cancel('cancels')">取 消</el-button>
-        <el-button type="primary" @click="addAncompOk">确 定</el-button>
-      </span>
-    </el-dialog>
+    <dialogs v-model.sync="form" :dialogVisible.sync="dialogVisible" :mtkTitle="mtkTitle" :mtkRules="mtkRules" :dialogForm="dialogForm" @addAncompOk="addAncompOk"></dialogs>
   </div>
 </template>
 
@@ -86,48 +26,131 @@ import {
   getHandleComp,
 } from "../../../utils/staff";
 import { payObj } from "../../../publicObj/payType";
-import tab from '../../../components/Tab.vue'
-import pagination from '../../../components/pagination.vue'
+import tab from "../../../components/Tab.vue";
+import pagination from "../../../components/pagination.vue";
+import queryForm from "../../../components/queryForm.vue";
+import dialogs from "../../../components/dialogs.vue";
 export default {
-  components:{
+  components: {
     tab,
     pagination,
+    queryForm,
+    dialogs,
   },
   data() {
     return {
-        data:[
+      dialogForm: [
         {
-          type:'username',
-          id:'1',
-          name:'账号',
+          type: "input",
+          prop: "username",
+          width: "width:300px",
+          name: "账号",
         },
         {
-          type:'name',
-          id:'2',
-          name:'姓名',
+          type: "input",
+          prop: "name",
+          width: "width:300px",
+          name: "姓名",
         },
         {
-          type:'age',
-          id:'3',
-          name:'年龄',
+          type: "input",
+          prop: "age",
+          width: "width:300px",
+          name: "年龄",
         },
         {
-          type:'mobile',
-          id:'4',
-          name:'电话',
+          type: "input",
+          prop: "mobile",
+          width: "width:300px",
+          name: "电话",
         },
         {
-          type:'salary',
-          id:'5',
-          name:'薪酬',
+          type: "input",
+          prop: "salary",
+          width: "width:300px",
+          name: "薪酬",
         },
         {
-          type:'entryDate',
-          id:'6',
-          name:'入职时间',
+          type: "date",
+          prop: "entryDate",
+          name: "入职时间",
         },
       ],
-      arr :[10, 20, 30, 40],
+      staffSkip: {
+        code: "",
+        name: "",
+        supplierName: "",
+      },
+      quer: [
+        {
+          type: "input",
+          prop: "code",
+          placeholder: "账号",
+        },
+        {
+          type: "input",
+          prop: "name",
+          placeholder: "姓名",
+        },
+        {
+          type: "slot",
+          slot_name: "query",
+        },
+      ],
+      data: [
+        {
+          prop: "index",
+          id: "0",
+          name: "序号",
+          width: 50,
+        },
+        {
+          type: "username",
+          id: "1",
+          name: "账号",
+        },
+        {
+          type: "name",
+          id: "2",
+          name: "姓名",
+        },
+        {
+          type: "age",
+          id: "3",
+          name: "年龄",
+        },
+        {
+          type: "mobile",
+          id: "4",
+          name: "电话",
+        },
+        {
+          type: "salary",
+          id: "5",
+          name: "薪酬",
+        },
+        {
+          type: "entryDate",
+          id: "6",
+          name: "入职时间",
+        },
+        {
+          prop: "active",
+          id: "9",
+          name: "操作",
+          children: [
+            {
+              type: "primary",
+              text: "编辑",
+            },
+            {
+              type: "danger",
+              text: "删除",
+            },
+          ],
+        },
+      ],
+      arr: [10, 20, 30, 40],
       mtkTitle: "",
       dialogVisible: false,
       form: {
@@ -144,11 +167,7 @@ export default {
       },
       currentPage: 1,
       pageSize: 10,
-      staffSkip: {
-        code: "",
-        name: "",
-        supplierName: "",
-      },
+
       payObj: payObj,
       total: 0,
       staffList: [],
@@ -184,18 +203,13 @@ export default {
       this.getHandleStaffs();
     },
     //重置表单
-    handelReset(skipForm) {
-      this.$refs[skipForm].resetFields();
+    handelReset() {
+      this.$refs["skipForm"].handelResetst();
     },
     //添加/编辑确认
     addAncompOk() {
-      this.$refs["cancels"].validate((valid) => {
-        console.log(valid, "valid");
-        if (!valid) return;
-        console.log(this.form.id);
         this.form.id ? this.commpOk(this.id) : this.handleadd();
         this.dialogVisible = false;
-      });
     },
     //触发模态框
     addFlag(id) {
@@ -272,7 +286,7 @@ export default {
     //删除接口
     dels(id) {
       getHandleDel(id);
-     this.getHandleStaffs();
+      this.getHandleStaffs();
     },
     //取消清空表单
     cancel(cancels) {
